@@ -40,31 +40,171 @@ def read_root() -> str:
     return """
     <html>
       <head>
-        <title>IdeaMiner API</title>
+        <title>IdeaMiner Dashboard</title>
         <style>
-          body { font-family: Arial, sans-serif; margin: 2rem; color: #1f2937; }
-          h1 { margin-bottom: 0.25rem; }
-          .muted { color: #6b7280; }
-          ul { line-height: 1.8; }
-          a { color: #2563eb; text-decoration: none; }
-          a:hover { text-decoration: underline; }
-          code { background: #f3f4f6; padding: 0.15rem 0.35rem; border-radius: 4px; }
+          :root {
+            --bg: #070b1a;
+            --card: #111936;
+            --card-2: #0f1530;
+            --text: #e8eeff;
+            --muted: #aab7e4;
+            --accent: #5eead4;
+            --accent-2: #60a5fa;
+            --accent-3: #f472b6;
+          }
+          * { box-sizing: border-box; }
+          body {
+            margin: 0;
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+            color: var(--text);
+            background: radial-gradient(900px 500px at 90% -10%, rgba(96,165,250,0.35), transparent 55%),
+                        radial-gradient(700px 450px at -10% -20%, rgba(244,114,182,0.25), transparent 50%),
+                        var(--bg);
+          }
+          .container { max-width: 1180px; margin: 0 auto; padding: 28px 18px 40px; }
+          .hero {
+            background: linear-gradient(120deg, rgba(94,234,212,0.14), rgba(96,165,250,0.18));
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 28px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+          }
+          h1 { font-size: 2rem; margin: 0 0 10px; }
+          .subtitle { margin: 0; color: var(--muted); font-size: 1.05rem; }
+          .actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 18px; }
+          .btn {
+            text-decoration: none;
+            display: inline-block;
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-weight: 700;
+            border: 1px solid transparent;
+          }
+          .btn-primary { background: linear-gradient(90deg, var(--accent), var(--accent-2)); color: #061022; }
+          .btn-ghost { color: var(--text); border-color: rgba(255,255,255,0.25); }
+          .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 14px; margin-top: 18px; }
+          .card {
+            background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 16px;
+          }
+          .kpi { grid-column: span 3; }
+          .kpi .label { color: var(--muted); font-size: 0.85rem; }
+          .kpi .value { font-size: 1.45rem; font-weight: 800; margin-top: 4px; }
+          .panel { grid-column: span 6; }
+          .panel-wide { grid-column: span 12; }
+          .list { margin: 0; padding-left: 18px; color: var(--muted); }
+          .list li { margin-bottom: 6px; }
+          .table { width: 100%; border-collapse: collapse; font-size: 0.94rem; }
+          .table th, .table td { padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); text-align: left; }
+          .pill { padding: 2px 8px; border-radius: 999px; font-weight: 700; font-size: 0.75rem; }
+          .pill-up { background: rgba(94,234,212,0.2); color: #5eead4; }
+          .pill-mid { background: rgba(96,165,250,0.2); color: #93c5fd; }
+          code { background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 6px; color: #d1fae5; }
+          .footer { color: var(--muted); margin-top: 18px; font-size: 0.9rem; }
+          @media (max-width: 980px) {
+            .kpi, .panel { grid-column: span 12; }
+          }
         </style>
       </head>
       <body>
-        <h1>IdeaMiner API</h1>
-        <p class="muted">Discover what people want before they know it themselves.</p>
-        <p><strong>Version:</strong> 1.0.0</p>
-        <h2>Useful Links</h2>
-        <ul>
-          <li><a href="/docs">Interactive API Docs</a></li>
-          <li><a href="/healthz">Health Check</a></li>
-          <li><a href="/readyz">Readiness Check</a></li>
-          <li><a href="/ideas/current">Current Ideas</a></li>
-          <li><a href="/ideas/predictive">Predictive Ideas</a></li>
-          <li><a href="/ideas/visualization/idea_001">Visualization Example</a></li>
-        </ul>
-        <p>POST simulation endpoint: <code>/ideas/simulate</code></p>
+        <div class="container">
+          <section class="hero">
+            <h1>IdeaMiner Intelligence Dashboard</h1>
+            <p class="subtitle">Bright, fast, and insight-driven. Track signals, identify breakout opportunities, and simulate go-to-market ideas in one place.</p>
+            <div class="actions">
+              <a class="btn btn-primary" href="/docs">Open API Console</a>
+              <a class="btn btn-ghost" href="/ideas/current">Live Current Ideas</a>
+              <a class="btn btn-ghost" href="/ideas/predictive">Predictive Feed</a>
+            </div>
+          </section>
+
+          <section class="grid">
+            <article class="card kpi"><div class="label">API Status</div><div class="value" id="kpi-status">Checking...</div></article>
+            <article class="card kpi"><div class="label">Current Ideas</div><div class="value" id="kpi-current">--</div></article>
+            <article class="card kpi"><div class="label">Predictive Ideas</div><div class="value" id="kpi-predictive">--</div></article>
+            <article class="card kpi"><div class="label">Model Version</div><div class="value">v1.0.0</div></article>
+
+            <article class="card panel">
+              <h3>Capability Stack</h3>
+              <ul class="list">
+                <li>Predictive trend scoring across growth, sentiment, and engagement</li>
+                <li>Idea DNA fingerprinting for audience and market-fit framing</li>
+                <li>Momentum visualization with trajectory + geo + influencer layers</li>
+                <li>Incubation simulations to estimate path and success probability</li>
+              </ul>
+            </article>
+
+            <article class="card panel">
+              <h3>Quick API Routes</h3>
+              <ul class="list">
+                <li><a href="/healthz">/healthz</a> and <a href="/readyz">/readyz</a></li>
+                <li><a href="/ideas/current">/ideas/current</a></li>
+                <li><a href="/ideas/predictive">/ideas/predictive</a></li>
+                <li><a href="/ideas/visualization/idea_001">/ideas/visualization/{idea_id}</a></li>
+                <li><code>POST /ideas/simulate</code></li>
+              </ul>
+            </article>
+
+            <article class="card panel-wide">
+              <h3>Current Ideas Snapshot</h3>
+              <table class="table" id="ideas-table">
+                <thead>
+                  <tr><th>Idea</th><th>Predictive Score</th><th>Velocity</th><th>Sentiment</th><th>Signal</th></tr>
+                </thead>
+                <tbody><tr><td colspan="5">Loading…</td></tr></tbody>
+              </table>
+            </article>
+          </section>
+
+          <p class="footer">IdeaMiner API • Professional Dashboard Layer • Built for Render deployment</p>
+        </div>
+
+        <script>
+          async function loadDashboard() {
+            const statusEl = document.getElementById('kpi-status');
+            const currentEl = document.getElementById('kpi-current');
+            const predictiveEl = document.getElementById('kpi-predictive');
+            const tableBody = document.querySelector('#ideas-table tbody');
+
+            try {
+              const health = await fetch('/healthz').then(r => r.json());
+              statusEl.textContent = health.status === 'ok' ? 'Live' : 'Degraded';
+
+              const current = await fetch('/ideas/current').then(r => r.json());
+              const predictive = await fetch('/ideas/predictive').then(r => r.json());
+              currentEl.textContent = String(current.length);
+              predictiveEl.textContent = String(predictive.length);
+
+              tableBody.innerHTML = '';
+              current.slice(0, 6).forEach(item => {
+                const idea = item.idea || {};
+                const score = Number(item.predictive_score || 0).toFixed(2);
+                const signal = item.predictive_score >= 0.75
+                  ? '<span class="pill pill-up">Breakout</span>'
+                  : '<span class="pill pill-mid">Emerging</span>';
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                  <td>${idea.title || 'Untitled'}</td>
+                  <td>${score}</td>
+                  <td>${Number(idea.velocity || 0).toFixed(1)}</td>
+                  <td>${Number(idea.sentiment_score || 0).toFixed(2)}</td>
+                  <td>${signal}</td>
+                `;
+                tableBody.appendChild(row);
+              });
+
+              if (!current.length) {
+                tableBody.innerHTML = '<tr><td colspan="5">No current ideas available.</td></tr>';
+              }
+            } catch (e) {
+              statusEl.textContent = 'Unavailable';
+              tableBody.innerHTML = '<tr><td colspan="5">Dashboard data unavailable. Check API deployment status.</td></tr>';
+            }
+          }
+          loadDashboard();
+        </script>
       </body>
     </html>
     """
