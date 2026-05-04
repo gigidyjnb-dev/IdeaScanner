@@ -1,6 +1,7 @@
 from typing import Any, Dict, List
 
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import HTMLResponse
 import logging
 
 # Set up logging
@@ -34,18 +35,39 @@ def _build_responses(sample_ideas: List[Idea]) -> List[IdeaResponse]:
             raise HTTPException(status_code=500, detail=f"Insight generation failed: {e}") from e
     return responses
 
-@app.get("/")
-def read_root():
-    return {
-        "message": "Welcome to IdeaMiner API - Discover what people want before they know it themselves!",
-        "version": "1.0.0",
-        "endpoints": {
-            "/ideas/current": "Get the current top 10 ideas identified by the system",
-            "/ideas/predictive": "Get ideas predicted to gain traction in the next 30-90 days",
-            "/ideas/visualization/{idea_id}": "Get 3D visualization data for how an idea moves across platforms",
-            "/ideas/simulate": "Run the Idea Incubation Simulator for a given idea"
-        }
-    }
+@app.get("/", response_class=HTMLResponse)
+def read_root() -> str:
+    return """
+    <html>
+      <head>
+        <title>IdeaMiner API</title>
+        <style>
+          body { font-family: Arial, sans-serif; margin: 2rem; color: #1f2937; }
+          h1 { margin-bottom: 0.25rem; }
+          .muted { color: #6b7280; }
+          ul { line-height: 1.8; }
+          a { color: #2563eb; text-decoration: none; }
+          a:hover { text-decoration: underline; }
+          code { background: #f3f4f6; padding: 0.15rem 0.35rem; border-radius: 4px; }
+        </style>
+      </head>
+      <body>
+        <h1>IdeaMiner API</h1>
+        <p class="muted">Discover what people want before they know it themselves.</p>
+        <p><strong>Version:</strong> 1.0.0</p>
+        <h2>Useful Links</h2>
+        <ul>
+          <li><a href="/docs">Interactive API Docs</a></li>
+          <li><a href="/healthz">Health Check</a></li>
+          <li><a href="/readyz">Readiness Check</a></li>
+          <li><a href="/ideas/current">Current Ideas</a></li>
+          <li><a href="/ideas/predictive">Predictive Ideas</a></li>
+          <li><a href="/ideas/visualization/idea_001">Visualization Example</a></li>
+        </ul>
+        <p>POST simulation endpoint: <code>/ideas/simulate</code></p>
+      </body>
+    </html>
+    """
 
 
 @app.get("/healthz")
@@ -147,4 +169,3 @@ def simulate_idea_incubation(idea: Idea):
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
-
