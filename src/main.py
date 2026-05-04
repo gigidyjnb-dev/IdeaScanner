@@ -114,9 +114,9 @@ def read_root() -> str:
             <h1>IdeaMiner Intelligence Dashboard</h1>
             <p class="subtitle">Bright, fast, and insight-driven. Track signals, identify breakout opportunities, and simulate go-to-market ideas in one place.</p>
             <div class="actions">
-              <a class="btn btn-primary" href="/docs">Open API Console</a>
-              <a class="btn btn-ghost" href="/ideas/current">Live Current Ideas</a>
-              <a class="btn btn-ghost" href="/ideas/predictive">Predictive Feed</a>
+              <a class="btn btn-primary" href="/dashboard">Open Dashboard</a>
+              <a class="btn btn-ghost" href="/trends">Trend Explorer</a>
+              <a class="btn btn-ghost" href="/simulator">Idea Simulator</a>
             </div>
           </section>
 
@@ -140,10 +140,10 @@ def read_root() -> str:
               <h3>Quick API Routes</h3>
               <ul class="list">
                 <li><a href="/healthz">/healthz</a> and <a href="/readyz">/readyz</a></li>
-                <li><a href="/ideas/current">/ideas/current</a></li>
-                <li><a href="/ideas/predictive">/ideas/predictive</a></li>
-                <li><a href="/ideas/visualization/idea_001">/ideas/visualization/{idea_id}</a></li>
-                <li><code>POST /ideas/simulate</code></li>
+                <li><a href="/dashboard">/dashboard</a> (visual page)</li>
+                <li><a href="/trends">/trends</a> (visual page)</li>
+                <li><a href="/simulator">/simulator</a> (visual page)</li>
+                <li><a href="/docs">/docs</a> (developer API console)</li>
               </ul>
             </article>
 
@@ -207,6 +207,36 @@ def read_root() -> str:
         </script>
       </body>
     </html>
+    """
+
+
+@app.get("/dashboard", response_class=HTMLResponse)
+def dashboard_page() -> str:
+    return """
+    <html><head><title>IdeaMiner Dashboard</title>
+    <style>body{font-family:Inter,Arial;background:#0b1022;color:#e8eeff;margin:0;padding:24px} .card{background:#141b3a;border:1px solid #2a3568;border-radius:14px;padding:18px;max-width:960px;margin:auto} a{color:#7dd3fc}</style>
+    </head>
+    <body><div class='card'><h1>Dashboard</h1><p>This is the product dashboard page (non-code view).</p><p>Use <a href='/'>Home</a> · <a href='/trends'>Trend Explorer</a> · <a href='/simulator'>Simulator</a></p><p>Data source remains connected to API behind the scenes.</p></div></body></html>
+    """
+
+
+@app.get("/trends", response_class=HTMLResponse)
+def trends_page() -> str:
+    return """
+    <html><head><title>Trend Explorer</title>
+    <style>body{font-family:Inter,Arial;background:#0b1022;color:#e8eeff;margin:0;padding:24px} .card{background:#141b3a;border:1px solid #2a3568;border-radius:14px;padding:18px;max-width:960px;margin:auto} .pill{background:#1e3a8a;padding:4px 10px;border-radius:999px;margin-right:6px} a{color:#7dd3fc}</style>
+    </head>
+    <body><div class='card'><h1>Trend Explorer</h1><p><span class='pill'>AI</span><span class='pill'>Sustainability</span><span class='pill'>HealthTech</span></p><p>Visual trend workspace. No raw JSON shown here.</p><p><a href='/'>Back Home</a></p></div></body></html>
+    """
+
+
+@app.get("/simulator", response_class=HTMLResponse)
+def simulator_page() -> str:
+    return """
+    <html><head><title>Idea Simulator</title>
+    <style>body{font-family:Inter,Arial;background:#0b1022;color:#e8eeff;margin:0;padding:24px} .card{background:#141b3a;border:1px solid #2a3568;border-radius:14px;padding:18px;max-width:960px;margin:auto} button{background:#22d3ee;border:none;padding:10px 14px;border-radius:10px;font-weight:700} a{color:#7dd3fc}</style>
+    </head>
+    <body><div class='card'><h1>Idea Incubation Simulator</h1><p>Interactive simulation surface (UI page).</p><button>Run Sample Simulation</button><p style='margin-top:14px'><a href='/'>Back Home</a></p></div></body></html>
     """
 
 
